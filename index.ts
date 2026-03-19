@@ -20,10 +20,6 @@ app.notFound((c) => c.json({ code: "NOT_FOUND", error: "Not Found" }, 404));
 
 app.get("/", (c) => c.json({ status: "PitGPT telemetry API — online" }));
 
-// Explicit Hard mount
-app.route("/hard", hardApp);
-
-// Backwards compatible: keep /ingest, /laps, /analysis at root
 app.route("/", hardApp);
 
 export type AppType = typeof app;
