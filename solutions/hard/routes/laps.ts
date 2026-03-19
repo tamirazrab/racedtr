@@ -1,11 +1,11 @@
 import { Hono } from "hono";
-import { store } from "../store";
+import { store } from "../state/store";
 import {
   getCompletedLapNumbers,
   getFramesForLap,
   getLapStartTimestamps,
-} from "../lap-builder";
-import { computeSectorTimes } from "../sector-analyzer";
+} from "../domain/lap-builder";
+import { computeSectorTimes } from "../domain/sector-analyzer";
 
 const router = new Hono();
 
@@ -18,17 +18,20 @@ router.get("/", (c) => {
   const completedLaps = getCompletedLapNumbers(frames);
   const lapStartTs = getLapStartTimestamps(frames);
 
-  const summaries = completedLaps.map(lapNum => {
+  const summaries = completedLaps.map((lapNum) => {
     const lapFrames = getFramesForLap(frames, lapNum);
     const startTs = lapStartTs.get(lapNum)!;
     const endTs = lapStartTs.get(lapNum + 1)!;
-    const speeds = lapFrames.map(f => f.spd);
+    const speeds = lapFrames.map((f) => f.spd);
 
     return {
       lapNumber: lapNum,
       lapTime: Math.round((endTs - startTs) * 1000) / 1000,
       sectors: computeSectorTimes(lapFrames, startTs, endTs),
-      avgSpeed: Math.round(speeds.reduce((a, b) => a + b, 0) / speeds.length * 10) / 10,
+      avgSpeed:
+        Math.round(
+          (speeds.reduce((a, b) => a + b, 0) / speeds.length) * 10
+        ) / 10,
       maxSpeed: Math.max(...speeds),
     };
   });
@@ -37,3 +40,4 @@ router.get("/", (c) => {
 });
 
 export default router;
+

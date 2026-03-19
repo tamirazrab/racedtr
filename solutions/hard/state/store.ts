@@ -1,4 +1,4 @@
-import type { TelemetryFrame } from "./types";
+import type { TelemetryFrame } from "../types/telemetry";
 
 let frames: TelemetryFrame[] = [];
 
@@ -10,4 +10,9 @@ export const store = {
   getFrames(): TelemetryFrame[] {
     return frames;
   },
+
+  reset(): void {
+    frames = [];
+  },
 };
+

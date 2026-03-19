@@ -31,3 +31,4 @@ export interface AnalysisResult {
   issue: string;
   coachingMessage: string;
 }
+

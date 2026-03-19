@@ -1,20 +1,19 @@
 import { Hono } from "hono";
-import type { TelemetryFrame } from "../types";
-import { store } from "../store";
+import { store } from "../state/store";
 import {
   getCompletedLapNumbers,
   getFramesForLap,
   getLapStartTimestamps,
-} from "../lap-builder";
-import { computeSectorTimes } from "../sector-analyzer";
-import { detectIssue, getIssueStats } from "../issue-detector";
+} from "../domain/lap-builder";
+import { computeSectorTimes } from "../domain/sector-analyzer";
+import { detectIssue, getIssueStats } from "../domain/issue-detector";
 
 const router = new Hono();
 
 const SECTOR_RANGES = [
-  { sector: 1, start: 0.0,   end: 0.333 },
+  { sector: 1, start: 0.0, end: 0.333 },
   { sector: 2, start: 0.333, end: 0.667 },
-  { sector: 3, start: 0.667, end: 1.0   },
+  { sector: 3, start: 0.667, end: 1.0 },
 ];
 
 router.get("/", (c) => {
@@ -30,7 +29,7 @@ router.get("/", (c) => {
 
   const lapStartTs = getLapStartTimestamps(frames);
 
-  const lapData = completedLaps.map(lapNum => {
+  const lapData = completedLaps.map((lapNum) => {
     const lapFrames = getFramesForLap(frames, lapNum);
     const startTs = lapStartTs.get(lapNum)!;
     const endTs = lapStartTs.get(lapNum + 1)!;
@@ -42,8 +41,8 @@ router.get("/", (c) => {
     };
   });
 
-  const bestLap = lapData.reduce((a, b) => a.lapTime < b.lapTime ? a : b);
-  const worstLap = lapData.reduce((a, b) => a.lapTime > b.lapTime ? a : b);
+  const bestLap = lapData.reduce((a, b) => (a.lapTime < b.lapTime ? a : b));
+  const worstLap = lapData.reduce((a, b) => (a.lapTime > b.lapTime ? a : b));
 
   // Find which sector lost the most time in the worst lap vs the best lap
   const sectorDeltas = worstLap.sectors.map((s, i) => {
@@ -51,10 +50,10 @@ router.get("/", (c) => {
     return { sector: s.sector, delta: s.time - bestSectorTime };
   });
 
-  const problemSectorEntry = sectorDeltas.reduce((a, b) => a.delta > b.delta ? a : b);
+  const problemSectorEntry = sectorDeltas.reduce((a, b) => (a.delta > b.delta ? a : b));
   const { start, end } = SECTOR_RANGES[problemSectorEntry.sector - 1];
 
-  const sectorFrames = worstLap.frames.filter(f => f.pos >= start && f.pos < end);
+  const sectorFrames = worstLap.frames.filter((f) => f.pos >= start && f.pos < end);
 
   const issue = detectIssue(sectorFrames);
   const stats = getIssueStats(sectorFrames);
@@ -121,3 +120,4 @@ function buildCoachingMessage(
 }
 
 export default router;
+

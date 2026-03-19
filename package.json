@@ -1,0 +1,22 @@
+{
+  "name": "pitgpt-telemetry-api",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "bun run index.ts",
+    "start": "bun run index.ts",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "dependencies": {
+    "arktype": "^2.2.0",
+    "hono": "latest"
+  },
+  "devDependencies": {
+    "@types/node": "^25.5.0",
+    "bun-types": "latest",
+    "typescript": "latest",
+    "vitest": "^4.1.0"
+  }
+}

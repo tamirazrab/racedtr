@@ -1,4 +1,4 @@
-import type { TelemetryFrame } from "./types";
+import type { TelemetryFrame } from "../types/telemetry";
 
 const STATIONARY_SPD = 5;
 const STATIONARY_POS_DELTA = 0.001;
@@ -23,8 +23,8 @@ export function filterStationary(frames: TelemetryFrame[]): TelemetryFrame[] {
  *   which confirms the car crossed start/finish to complete it)
  */
 export function getCompletedLapNumbers(frames: TelemetryFrame[]): number[] {
-  const allLaps = [...new Set(frames.map(f => f.lap))].sort((a, b) => a - b);
-  const timed = allLaps.filter(n => n > 0);
+  const allLaps = [...new Set(frames.map((f) => f.lap))].sort((a, b) => a - b);
+  const timed = allLaps.filter((n) => n > 0);
   // Drop the last: no subsequent lap means we can't confirm it completed
   return timed.slice(0, -1);
 }
@@ -33,7 +33,7 @@ export function getFramesForLap(
   frames: TelemetryFrame[],
   lapNum: number
 ): TelemetryFrame[] {
-  return frames.filter(f => f.lap === lapNum);
+  return frames.filter((f) => f.lap === lapNum);
 }
 
 /**
@@ -44,10 +44,8 @@ export function getFramesForLap(
  * Using the first frame of lap N+1 as the end timestamp for lap N correctly captures
  * the moment the car crossed start/finish.
  */
-export function getLapStartTimestamps(
-  frames: TelemetryFrame[]
-): Map<number, number> {
-  const allLaps = [...new Set(frames.map(f => f.lap))].sort((a, b) => a - b);
+export function getLapStartTimestamps(frames: TelemetryFrame[]): Map<number, number> {
+  const allLaps = [...new Set(frames.map((f) => f.lap))].sort((a, b) => a - b);
   const map = new Map<number, number>();
   for (const lap of allLaps) {
     const lapFrames = getFramesForLap(frames, lap);
@@ -55,3 +53,4 @@ export function getLapStartTimestamps(
   }
   return map;
 }
+

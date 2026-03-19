@@ -302,3 +302,4 @@ export const telemetry: TelemetryFrame[] = [
   { ts: 504.4, lap: 4, pos: 0.125, spd: 0,   thr: 0.0,  brk: 1.0, str: 0.00,  gear: 0, rpm: 800,   tyres: { fl: 95, fr: 98, rl: 92, rr: 94 } },
   { ts: 505.4, lap: 4, pos: 0.125, spd: 0,   thr: 0.0,  brk: 0.0, str: 0.00,  gear: 0, rpm: 800,   tyres: { fl: 92, fr: 95, rl: 89, rr: 91 } },
 ];
+
